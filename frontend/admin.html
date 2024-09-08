@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8-Ball Admin</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <div id="current-question">Waiting for questions...</div>
+    <input type="text" id="answer-input" placeholder="Enter answer">
+    <button id="submit-answer">Submit Answer</button>
+    <script>
+        const socket = io();
+        const currentQuestionDiv = document.getElementById('current-question');
+        const answerInput = document.getElementById('answer-input');
+        const submitButton = document.getElementById('submit-answer');
+
+        let currentQuestion = '';
+
+        socket.emit('admin_connect');
+
+        socket.on('new_question', (questionData) => {
+            console.log('New question received:', questionData); // Debug log
+            if (questionData) {
+                currentQuestion = questionData.question;
+                currentQuestionDiv.textContent = `Current question: ${currentQuestion}`;
+            }
+        });
+
+        submitButton.addEventListener('click', () => {
+            const answer = answerInput.value.trim();
+            if (answer && currentQuestion) {
+                console.log('Submitting answer:', answer); // Debug log
+                socket.emit('provide_answer', { question: currentQuestion, answer });
+                answerInput.value = '';
+                currentQuestionDiv.textContent = 'Waiting for next question...';
+                currentQuestion = '';
+            }
+        });
+    </script>
+</body>
+</html>
