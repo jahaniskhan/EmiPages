@@ -155,3 +155,16 @@ button:hover {
     font-size: 0.7rem;
     color: #f8e559;
 }
+
+.love-link, .home-link {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+    color: #f8e559;
+    text-decoration: none;
+    font-size: 0.8rem;
+}
+
+.love-link:hover, .home-link:hover {
+    color: #ff00ff;
+}
