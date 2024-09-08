@@ -1,16 +1,16 @@
 {
-  "name": "magic-8-ball-app",
+  "name": "emi",
   "version": "1.0.0",
-  "description": "Magic 8 Ball with admin interaction",
-  "main": "backend/server.js",
+  "description": "Your app description",
+  "main": "server.js",
   "scripts": {
     "start": "node backend/server.js"
+  },
+  "engines": {
+    "node": "14.x"
   },
   "dependencies": {
     "express": "^4.17.1",
     "socket.io": "^4.0.0"
-  },
-  "engines": {
-    "node": "14.x"
   }
 }
