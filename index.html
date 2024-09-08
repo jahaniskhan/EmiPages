@@ -6,7 +6,6 @@
     <title>Y2K Magic 8 Ball Cards</title>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
-    <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
     <div class="container">
@@ -21,27 +20,10 @@
         <div id="card-container">
             <!-- Cards will be added here dynamically -->
         </div>
-        
-        <!-- Add this link at the bottom of your container div -->
         <a href="love-reasons.html" class="love-link">52 Reasons Why I Love You</a>
-        
-        <!-- Add this logout button -->
-        <a href="#" onclick="logout()" class="home-link">Logout</a>
     </div>
-    <script src="js/script.js"></script>
-    
-    <!-- Add this script for login check and logout function -->
-    <script>
-        // Check login status
-        if (localStorage.getItem('isLoggedIn') !== 'true') {
-            window.location.href = 'login.html';
-        }
 
-        // Logout function
-        function logout() {
-            localStorage.removeItem('isLoggedIn');
-            window.location.href = 'login.html';
-        }
-    </script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/script.js"></script>
 </body>
 </html>

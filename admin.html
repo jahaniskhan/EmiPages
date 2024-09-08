@@ -12,6 +12,17 @@
     <button id="submit-answer">Submit Answer</button>
     <script>
         const socket = io();
+
+        socket.on('connect', () => {
+            console.log('Admin connected to server');
+            socket.emit('admin_connect');
+        });
+
+        socket.on('new_question', (questionData) => {
+            console.log('Received new question:', questionData);
+            // ... rest of your code to display the question
+        });
+
         const currentQuestionDiv = document.getElementById('current-question');
         const answerInput = document.getElementById('answer-input');
         const submitButton = document.getElementById('submit-answer');
