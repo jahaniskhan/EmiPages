@@ -9,12 +9,12 @@ const io = socketIo(server);
 
 const PORT = process.env.PORT || 3000;
 
-// Serve static files from the frontend directory
-app.use(express.static(path.join(__dirname, '../frontend')));
+// Serve static files from the root directory
+app.use(express.static(path.join(__dirname, '..')));
 
-// Serve the admin page (now without authentication)
+// Serve the admin page
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/admin.html'));
+    res.sendFile(path.join(__dirname, '../admin.html'));
 });
 
 // Queue to store pending questions
@@ -27,18 +27,21 @@ function updateAdminsWithQueue() {
 
 // Socket.io connection handling
 io.on('connection', (socket) => {
-    console.log('A user connected');
+    console.log('A user connected. Socket ID:', socket.id);
 
     // Listen for 'ask_question' events from the client
     socket.on('ask_question', (question) => {
-        console.log('Received question:', question);
+        console.log('Received question:', question, 'from socket:', socket.id);
         
         questionQueue.push({ question, socketId: socket.id });
         
         updateAdminsWithQueue();
 
         if (io.sockets.adapter.rooms.get('admin') && io.sockets.adapter.rooms.get('admin').size > 0) {
+            console.log('Sending new question to admin');
             io.to('admin').emit('new_question', questionQueue[0]);
+        } else {
+            console.log('No admin connected to receive the question');
         }
     });
 
@@ -63,7 +66,7 @@ io.on('connection', (socket) => {
     // Handle admin connection
     socket.on('admin_connect', () => {
         socket.join('admin');
-        console.log('Admin connected');
+        console.log('Admin connected. Socket ID:', socket.id);
         if (questionQueue.length > 0) {
             socket.emit('new_question', questionQueue[0]);
         }
@@ -71,7 +74,7 @@ io.on('connection', (socket) => {
 
     // Handle disconnection
     socket.on('disconnect', () => {
-        console.log('User disconnected');
+        console.log('User disconnected. Socket ID:', socket.id);
     });
 });
 
