@@ -1,0 +1,8 @@
+   # Ignore everything in the parent directory
+   ../
+   # But don't ignore the current directory
+   !./
+
+   .DS_Store
+   node_modules/
+   ../*
