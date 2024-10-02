@@ -10,10 +10,11 @@ const io = socketIo(server);
 const PORT = process.env.PORT || 3000;
 
 // Serve static files from the root directory
-app.use(express.static(path.join(__dirname, '../')));
+app.use(express.static(path.join(__dirname, '..')));
 
 // Serve the admin page
 app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, '../admin.html'));
     res.sendFile(path.join(__dirname, '../admin.html'));
 });
 
