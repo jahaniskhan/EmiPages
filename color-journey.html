@@ -4,14 +4,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A Journey Through Colors</title>
-    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/color-journey.css">
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Roboto:wght@400;700&family=Creepster&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #1a1a1a;
+            color: #d9c8a9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            background-image: url('path/to/spooky-background.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        .container {
+            background-color: rgba(30, 30, 30, 0.9);
+            border: 2px solid #4a3f2f;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        .title {
+            font-family: 'Creepster', cursive;
+            font-size: 36px;
+            margin-bottom: 20px;
+            color: #e2c275;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        .polaroid {
+            background: #fff;
+            padding: 10px 10px 30px 10px;
+            box-shadow: 0 0.2rem 1.2rem rgba(0,0,0,0.4);
+            width: 80%;
+            max-width: 350px;
+            margin: 0 auto 30px;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+        .polaroid:hover {
+            transform: scale(1.02);
+        }
+        .polaroid::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.25) 100%);
+            pointer-events: none;
+        }
+        .polaroid-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: filter 1s ease;
+        }
+        .image-caption {
+            font-family: 'Permanent Marker', cursive;
+            font-size: 1rem;
+            color: #2c2416;
+            margin-top: 10px;
+            text-align: left;
+            padding: 0 5px;
+            transform: rotate(-1deg);
+        }
+        .text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #d9c8a9;
+            text-align: justify;
+            margin-bottom: 30px;
+            padding: 0 20px;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4a3f2f;
+            color: #e2c275;
+            border: none;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #5a4f3f;
+        }
+        button:active {
+            transform: scale(0.98);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .scene-indicator {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .scene-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #4a3f2f;
+            margin: 0 5px;
+            opacity: 0.3;
+            transition: opacity 0.3s;
+        }
+        .scene-dot.active {
+            opacity: 1;
+            background-color: #e2c275;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1 class="title">A Journey Through Colors</h1>
         <div class="polaroid">
-            <img src="path/to/your/image.jpg" alt="Couple selfie" class="polaroid-image" id="storyImage">
+            <img src="IMG_3638.jpg" alt="Couple selfie" class="polaroid-image" id="storyImage">
             <p class="image-caption" id="imageCaption">Our story begins...</p>
         </div>
         <div class="text" id="storyText"></div>
@@ -20,10 +143,77 @@
             <button onclick="nextScene()" id="nextButton">Next</button>
         </div>
         <div class="scene-indicator" id="sceneIndicator"></div>
-        <div class="gallery" id="gallery"></div>
     </div>
-    <a href="index.html" class="home-link">Back to Magic 8 Ball</a>
-    <a href="#" onclick="logout()" class="home-link">Logout</a>
-    <script src="js/color-journey.js"></script>
+
+    <script>
+        const scenes = [
+            { 
+                filter: 'grayscale(100%)', 
+                text: "In the beginning, the world was a canvas of black and white, shadows and light intertwining in a delicate dance. Our story starts here, in this monochrome moment frozen in time.",
+                caption: "10/2/24 - First snapshot"
+            },
+            { 
+                filter: 'grayscale(100%) sepia(100%) hue-rotate(50deg)', 
+                text: "As if by magic, a hint of green begins to seep into our world. It's subtle at first, like the first tender shoots of spring emerging from winter's grasp, bringing with it the promise of new beginnings.",
+                caption: "10/2/24 - Green tones emerging"
+            },
+            { 
+                filter: 'grayscale(100%) sepia(100%) hue-rotate(180deg)', 
+                text: "The green fades, giving way to soothing shades of blue. It washes over the scene like a gentle wave, bringing with it a sense of calm and depth. In this azure world, new perspectives emerge.",
+                caption: "10/2/24 - Blueshifted reality"
+            },
+            { 
+                filter: 'none', 
+                text: "Finally, the full spectrum of colors bursts forth, revealing the warmth and vibrancy of the moment in its true glory. Every hue tells a story, every shade a memory, as our journey through the spectrum comes full circle.",
+                caption: "10/2/24 - Full color revealed!"
+            }
+        ];
+
+        let currentScene = 0;
+        const image = document.getElementById('storyImage');
+        const text = document.getElementById('storyText');
+        const caption = document.getElementById('imageCaption');
+        const prevButton = document.getElementById('prevButton');
+        const nextButton = document.getElementById('nextButton');
+        const indicator = document.getElementById('sceneIndicator');
+
+        function updateScene() {
+            image.style.filter = scenes[currentScene].filter;
+            caption.textContent = scenes[currentScene].caption;
+            text.style.opacity = 0;
+            setTimeout(() => {
+                text.innerHTML = scenes[currentScene].text;
+                text.style.opacity = 1;
+            }, 500);
+            prevButton.disabled = currentScene === 0;
+            nextButton.disabled = currentScene === scenes.length - 1;
+            updateSceneIndicator();
+        }
+
+        function nextScene() {
+            if (currentScene < scenes.length - 1) {
+                currentScene++;
+                updateScene();
+            }
+        }
+
+        function prevScene() {
+            if (currentScene > 0) {
+                currentScene--;
+                updateScene();
+            }
+        }
+
+        function updateSceneIndicator() {
+            indicator.innerHTML = '';
+            for (let i = 0; i < scenes.length; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'scene-dot' + (i === currentScene ? ' active' : '');
+                indicator.appendChild(dot);
+            }
+        }
+
+        updateScene();
+    </script>
 </body>
 </html>
