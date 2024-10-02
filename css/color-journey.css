@@ -1,0 +1,44 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #120458;
+    color: #f8e559;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    background-color: #1b0c69;
+    border: 2px solid #4a3f2f;
+    box-shadow: 0 0 20px #f8e559;
+    padding: 40px;
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+}
+
+.title {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #e2c275;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Add the rest of the CSS styles from the provided code */
+
+.home-link {
+    margin-top: 20px;
+    color: #f8e559;
+    text-decoration: none;
+    font-size: 0.8rem;
+}
+
+.home-link:hover {
+    color: #ff00ff;
+}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Journey Through Colors</title>
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/color-journey.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">A Journey Through Colors</h1>
+        <div class="polaroid">
+            <img src="path/to/your/image.jpg" alt="Couple selfie" class="polaroid-image" id="storyImage">
+            <p class="image-caption" id="imageCaption">Our story begins...</p>
+        </div>
+        <div class="text" id="storyText"></div>
+        <div class="controls">
+            <button onclick="prevScene()" id="prevButton">Previous</button>
+            <button onclick="nextScene()" id="nextButton">Next</button>
+        </div>
+        <div class="scene-indicator" id="sceneIndicator"></div>
+        <div class="gallery" id="gallery"></div>
+    </div>
+    <a href="index.html" class="home-link">Back to Magic 8 Ball</a>
+    <a href="#" onclick="logout()" class="home-link">Logout</a>
+    <script src="js/color-journey.js"></script>
+</body>
+</html>
