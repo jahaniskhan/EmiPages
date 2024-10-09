@@ -82,7 +82,7 @@
 <body>
     <div class="polaroid">
         <div class="polaroid-inner">
-            <canvas id="galaxyCanvas"></canvas>
+            <canvas id="canvas"></canvas>
             <div id="emiLabel">This is Emi</div>
             <div id="emiArrow"></div>
         </div>
@@ -95,7 +95,7 @@
         <button onclick="nextScene()" id="nextButton">Next</button>
     </div>
     <script>
-        const canvas = document.getElementById('galaxyCanvas');
+        const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         const emiLabel = document.getElementById('emiLabel');
         const emiArrow = document.getElementById('emiArrow');
@@ -112,6 +112,9 @@
         let lastX, lastY;
         let isUserInteracting = false;
         let lastInteractionTime = 0;
+
+        // Define visibility and positioning variables
+        let centerVisible = true;
 
         function createSpiralGalaxy() {
             stars.length = 0;
@@ -163,7 +166,8 @@
                         y: centerY + r * Math.sin(angle),
                         z: z,
                         radius: 5 + Math.random() * 20,
-                        color: `hsla(${Math.random() * 60 + 300}, 100%, 50%, 0.3)`
+                        color: `hsla(${Math.random() * 60 + 300}, 100%, 50%, 0.3)`,
+                        type: 'nebulas'  // Added type property
                     });
                 }
             }
@@ -208,7 +212,7 @@
         }
 
         function drawGalaxy() {
-            ctx.clearRect(0, 0, galaxyCanvas.width, galaxyCanvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             // Draw background stars
             backgroundStars.forEach(star => {
@@ -220,17 +224,17 @@
                 ctx.globalAlpha = 1;
                 
                 star.y += star.speed;
-                if (star.y > galaxyCanvas.height) star.y = 0;
+                if (star.y > canvas.height) star.y = 0;
                 
                 star.alpha += Math.random() * 0.1 - 0.05;
                 star.alpha = Math.max(0, Math.min(1, star.alpha));
             });
 
             ctx.save();
-            ctx.translate(galaxyCanvas.width / 2, galaxyCanvas.height / 2);
+            ctx.translate(canvas.width / 2, canvas.height / 2);
 
             // Adjust scale to fit the entire galaxy
-            const scale = (galaxyCanvas.width / 800) * 0.9; // 90% of the canvas width, adjust as needed
+            const scale = (canvas.width / 800) * 0.9; // 90% of the canvas width, adjust as needed
             ctx.scale(scale, scale);
 
             const allObjects = [...dust, ...nebulas, ...stars].sort((a, b) => b.z - a.z);
@@ -242,14 +246,14 @@
                 const y = rotated.y * objScale;
 
                 // Only draw if within the canvas bounds
-                if (Math.abs(x) <= galaxyCanvas.width / (2 * scale) && Math.abs(y) <= galaxyCanvas.height / (2 * scale)) {
+                if (Math.abs(x) <= canvas.width / (2 * scale) && Math.abs(y) <= canvas.height / (2 * scale)) {
                     ctx.beginPath();
                     ctx.arc(x, y, Math.max(0.1, obj.radius * objScale), 0, Math.PI * 2);
 
                     if (obj.type === 'bulge' || obj.type === 'arm') {
                         ctx.fillStyle = obj.color;
                         ctx.fill();
-                    } else if (obj.radius > 1) {  // Nebulas
+                    } else if (obj.type === 'nebulas') {  // Correctly checking for nebulas
                         const gradient = ctx.createRadialGradient(x, y, 0, x, y, obj.radius * objScale);
                         gradient.addColorStop(0, obj.color);
                         gradient.addColorStop(1, 'transparent');
@@ -266,8 +270,8 @@
 
             // Update Emi label position
             if (centerVisible) {
-                const labelX = canvas.width / 2 + centerX;
-                const labelY = canvas.height / 2 + centerY - 30;
+                const labelX = canvas.width / 2;
+                const labelY = canvas.height / 2 - 30;
                 emiLabel.style.display = 'block';
                 emiLabel.style.left = `${labelX}px`;
                 emiLabel.style.top = `${labelY}px`;
@@ -292,6 +296,7 @@
             requestAnimationFrame(animate);
         }
 
+        // Initialize galaxy and start animation
         createSpiralGalaxy();
         animate();
 
@@ -332,7 +337,7 @@
         document.getElementById('prevButton').addEventListener('click', () => {
             if (typeof prevScene === 'function') {
                 prevScene();
-            } else {
+            } else if (window.parent && typeof window.parent.prevScene === 'function') {
                 window.parent.prevScene();
             }
         });
@@ -340,7 +345,7 @@
         document.getElementById('nextButton').addEventListener('click', () => {
             if (typeof nextScene === 'function') {
                 nextScene();
-            } else {
+            } else if (window.parent && typeof window.parent.nextScene === 'function') {
                 window.parent.nextScene();
             }
         });
