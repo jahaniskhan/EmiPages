@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystical Spiral Galaxy for Emi</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: black; }
+        .polaroid {
+            position: relative;
+            background: white;
+            padding: 10px 10px 40px 10px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            width: 600px;
+            margin: 20px auto;
+        }
+        .polaroid-inner {
+            background: black;
+            position: relative;
+            overflow: hidden;
+        }
+        .polaroid::after {
+            content: 'The Galaxy of Our Colors';
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            color: black;
+        }
+        #emiLabel {
+            position: absolute;
+            color: crimson;
+            font-family: 'Arial', sans-serif;
+            font-size: 14px;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        #emiArrow {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 10px solid crimson;
+            pointer-events: none;
+        }
+        .text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #d9c8a9;
+            text-align: justify;
+            margin: 20px 0;
+            padding: 0 20px;
+        }
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-family: 'Creepster', cursive;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4a3f2f;
+            color: #e2c275;
+            border: none;
+            transition: background-color 0.3s;
+            margin: 0 10px;
+        }
+        button:hover {
+            background-color: #5a4f3f;
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="polaroid">
+        <div class="polaroid-inner">
+            <canvas id="galaxyCanvas"></canvas>
+            <div id="emiLabel">This is Emi</div>
+            <div id="emiArrow"></div>
+        </div>
+    </div>
+    <div class="text" id="storyText">
+        Our journey through colors culminates in this cosmic representation. Each dot in this galactic spiral represents a unique hue in our shared story, with Emi at the vibrant center, the heart of our colorful universe.
+    </div>
+    <div class="controls">
+        <button onclick="prevScene()" id="prevButton">Previous</button>
+        <button onclick="nextScene()" id="nextButton">Next</button>
+    </div>
+    <script>
+        const canvas = document.getElementById('galaxyCanvas');
+        const ctx = canvas.getContext('2d');
+        const emiLabel = document.getElementById('emiLabel');
+        const emiArrow = document.getElementById('emiArrow');
+
+        canvas.width = 580;  // Adjusted for padding
+        canvas.height = 580;
+
+        const stars = [];
+        const dust = [];
+        const nebulas = [];
+        const backgroundStars = [];
+        let rotationX = 0;
+        let rotationY = 0;
+        let lastX, lastY;
+        let isUserInteracting = false;
+        let lastInteractionTime = 0;
+
+        function createSpiralGalaxy() {
+            stars.length = 0;
+            dust.length = 0;
+            nebulas.length = 0;
+            backgroundStars.length = 0;
+
+            const centerX = 0;
+            const centerY = 0;
+            const armCount = 4;
+            const armAngle = (2 * Math.PI) / armCount;
+
+            // Central bulge (golden)
+            for (let i = 0; i < 3000; i++) {
+                const r = Math.random() * 60;
+                const angle = Math.random() * 2 * Math.PI;
+                const z = (Math.random() - 0.5) * 30;
+                stars.push({
+                    x: centerX + r * Math.cos(angle),
+                    y: centerY + r * Math.sin(angle),
+                    z: z,
+                    radius: Math.random() * 1.5 + 0.5,
+                    color: `hsl(45, 100%, ${50 + Math.random() * 50}%)`,
+                    type: 'bulge'
+                });
+            }
+
+            // Spiral arms
+            for (let i = 0; i < 12000; i++) {
+                const r = 60 + Math.random() * 220; // Reduced from 240 to 220
+                const armOffset = Math.random() * armAngle * 0.5;
+                const spiralAngle = (r / 20) + armOffset;
+                const arm = Math.floor(Math.random() * armCount);
+                const angle = arm * armAngle + spiralAngle;
+                const z = (Math.random() - 0.5) * 50;
+
+                if (Math.random() < 0.95) {  // Stars
+                    stars.push({
+                        x: centerX + r * Math.cos(angle),
+                        y: centerY + r * Math.sin(angle),
+                        z: z,
+                        radius: Math.random() * 1.5 + 0.5,
+                        color: `hsl(${200 + Math.random() * 160}, 100%, 80%)`,
+                        type: 'arm'
+                    });
+                } else {  // Nebulas
+                    nebulas.push({
+                        x: centerX + r * Math.cos(angle),
+                        y: centerY + r * Math.sin(angle),
+                        z: z,
+                        radius: 5 + Math.random() * 20,
+                        color: `hsla(${Math.random() * 60 + 300}, 100%, 50%, 0.3)`
+                    });
+                }
+            }
+
+            // Dust and gas
+            for (let i = 0; i < 8000; i++) {
+                const r = 60 + Math.random() * 220; // Reduced from 240 to 220
+                const armOffset = Math.random() * armAngle * 0.5;
+                const spiralAngle = (r / 20) + armOffset;
+                const arm = Math.floor(Math.random() * armCount);
+                const angle = arm * armAngle + spiralAngle;
+                const z = (Math.random() - 0.5) * 50;
+
+                dust.push({
+                    x: centerX + r * Math.cos(angle),
+                    y: centerY + r * Math.sin(angle),
+                    z: z,
+                    radius: Math.random() * 1.5,
+                    color: `hsla(${Math.random() * 60}, 50%, 50%, 0.1)`
+                });
+            }
+
+            // Background stars
+            for (let i = 0; i < 500; i++) {
+                backgroundStars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    speed: Math.random() * 0.5 + 0.1,
+                    radius: Math.random() * 1 + 0.5,
+                    color: `hsl(${Math.random() * 360}, 100%, 80%)`,
+                    alpha: Math.random()
+                });
+            }
+        }
+
+        function rotatePoint(x, y, z) {
+            let newX = x * Math.cos(rotationY) + z * Math.sin(rotationY);
+            let newZ = -x * Math.sin(rotationY) + z * Math.cos(rotationY);
+            let newY = y * Math.cos(rotationX) - newZ * Math.sin(rotationX);
+            newZ = y * Math.sin(rotationX) + newZ * Math.cos(rotationX);
+            return { x: newX, y: newY, z: newZ };
+        }
+
+        function drawGalaxy() {
+            ctx.clearRect(0, 0, galaxyCanvas.width, galaxyCanvas.height);
+            
+            // Draw background stars
+            backgroundStars.forEach(star => {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                ctx.fillStyle = star.color;
+                ctx.globalAlpha = star.alpha;
+                ctx.fill();
+                ctx.globalAlpha = 1;
+                
+                star.y += star.speed;
+                if (star.y > galaxyCanvas.height) star.y = 0;
+                
+                star.alpha += Math.random() * 0.1 - 0.05;
+                star.alpha = Math.max(0, Math.min(1, star.alpha));
+            });
+
+            ctx.save();
+            ctx.translate(galaxyCanvas.width / 2, galaxyCanvas.height / 2);
+
+            // Adjust scale to fit the entire galaxy
+            const scale = (galaxyCanvas.width / 800) * 0.9; // 90% of the canvas width, adjust as needed
+            ctx.scale(scale, scale);
+
+            const allObjects = [...dust, ...nebulas, ...stars].sort((a, b) => b.z - a.z);
+
+            allObjects.forEach(obj => {
+                const rotated = rotatePoint(obj.x, obj.y, obj.z);
+                const objScale = 300 / (300 - rotated.z);
+                const x = rotated.x * objScale;
+                const y = rotated.y * objScale;
+
+                // Only draw if within the canvas bounds
+                if (Math.abs(x) <= galaxyCanvas.width / (2 * scale) && Math.abs(y) <= galaxyCanvas.height / (2 * scale)) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, Math.max(0.1, obj.radius * objScale), 0, Math.PI * 2);
+
+                    if (obj.type === 'bulge' || obj.type === 'arm') {
+                        ctx.fillStyle = obj.color;
+                        ctx.fill();
+                    } else if (obj.radius > 1) {  // Nebulas
+                        const gradient = ctx.createRadialGradient(x, y, 0, x, y, obj.radius * objScale);
+                        gradient.addColorStop(0, obj.color);
+                        gradient.addColorStop(1, 'transparent');
+                        ctx.fillStyle = gradient;
+                        ctx.fill();
+                    } else {  // Dust
+                        ctx.fillStyle = obj.color;
+                        ctx.fill();
+                    }
+                }
+            });
+
+            ctx.restore();
+
+            // Update Emi label position
+            if (centerVisible) {
+                const labelX = canvas.width / 2 + centerX;
+                const labelY = canvas.height / 2 + centerY - 30;
+                emiLabel.style.display = 'block';
+                emiLabel.style.left = `${labelX}px`;
+                emiLabel.style.top = `${labelY}px`;
+                emiArrow.style.display = 'block';
+                emiArrow.style.left = `${labelX + emiLabel.offsetWidth / 2 - 5}px`;
+                emiArrow.style.top = `${labelY + 20}px`;
+            } else {
+                emiLabel.style.display = 'none';
+                emiArrow.style.display = 'none';
+            }
+        }
+
+        function animate() {
+            drawGalaxy();
+            
+            const currentTime = Date.now();
+            if (!isUserInteracting && currentTime - lastInteractionTime > 1000) {
+                rotationY += 0.005;
+                rotationX = Math.sin(rotationY * 0.5) * 0.2;
+            }
+            
+            requestAnimationFrame(animate);
+        }
+
+        createSpiralGalaxy();
+        animate();
+
+        // Event handlers for rotation
+        canvas.addEventListener('mousedown', handleStart);
+        canvas.addEventListener('mousemove', handleMove);
+        canvas.addEventListener('mouseup', handleEnd);
+        canvas.addEventListener('touchstart', handleStart);
+        canvas.addEventListener('touchmove', handleMove);
+        canvas.addEventListener('touchend', handleEnd);
+
+        function handleStart(e) {
+            e.preventDefault();
+            isUserInteracting = true;
+            lastX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            lastY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+        }
+
+        function handleMove(e) {
+            if (!isUserInteracting) return;
+            e.preventDefault();
+            let currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            let currentY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+            let dx = currentX - lastX;
+            let dy = currentY - lastY;
+            rotationY += dx * 0.03;  // Increased sensitivity for more fluid movement
+            rotationX += dy * 0.03;  // Increased sensitivity for more fluid movement
+            lastX = currentX;
+            lastY = currentY;
+            lastInteractionTime = Date.now();
+        }
+
+        function handleEnd() {
+            isUserInteracting = false;
+        }
+
+        // Event listeners for buttons
+        document.getElementById('prevButton').addEventListener('click', () => {
+            if (typeof prevScene === 'function') {
+                prevScene();
+            } else {
+                window.parent.prevScene();
+            }
+        });
+
+        document.getElementById('nextButton').addEventListener('click', () => {
+            if (typeof nextScene === 'function') {
+                nextScene();
+            } else {
+                window.parent.nextScene();
+            }
+        });
+    </script>
+</body>
+</html>
